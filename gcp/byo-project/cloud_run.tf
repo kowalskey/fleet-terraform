@@ -43,8 +43,7 @@ locals {
 }
 
 module "fleet-service" {
-  source  = "GoogleCloudPlatform/cloud-run/google//modules/v2"
-  version = "0.17.2"
+  source = "github.com/kowalskey/terraform-google-cloud-run//modules/v2?ref=main"
 
   service_name                  = "fleet-api"
   project_id                    = var.project_id
@@ -53,6 +52,7 @@ module "fleet-service" {
   service_account               = google_service_account.fleet_run_sa.email
   enable_prometheus_sidecar     = false
   cloud_run_deletion_protection = false
+  invoker_iam_disabled          = true
 
   vpc_access = {
     network_interfaces = {
@@ -218,10 +218,10 @@ data "google_project" "project" {
   project_id = var.project_id
 }
 
-resource "google_cloud_run_v2_service_iam_member" "allow_lb_invoker" {
-  project  = var.project_id
-  location = module.fleet-service.location
-  name     = module.fleet-service.service_name
-  role     = "roles/run.invoker"
-  member   = "allUsers"
-}
+# resource "google_cloud_run_v2_service_iam_member" "allow_lb_invoker" {
+#  project  = var.project_id
+#  location = module.fleet-service.location
+#  name     = module.fleet-service.service_name
+#  role     = "roles/run.invoker"
+#  member   = "allUsers"
+#} 
